@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <h1>Supabase</h1>
+    <div id="history"></div>
+    <input type="button" value="create" id="create_button" />
+    <script>
+      const supabaseUrl = 'https://qmbwnokmupabfcclbues.supabase.co';
+      const supabaseKey =
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFtYndub2ttdXBhYmZjY2xidWVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0NzY4ODksImV4cCI6MjAyMzA1Mjg4OX0.r8Dkx-hCfJLYhM94Qbb7mi99VtCjzxp9rlXH2_UHzqA';
+      const client = supabase.createClient(supabaseUrl, supabaseKey);
+
+      async function refreshHistory() {
+        let { data: page, error } = await client.from('page').select('*');
+        let tag = '';
+        for (let i = 0; i < page.length; i++) {
+          tag += `<h2>${page[i].title}</h2>${page[i].body}`;
+        }
+        document.querySelector('#history').innerHTML = tag;
+      }
+      refreshHistory();
+
+      async function pageHandler() {
+        const { data, error } = await client
+          .from('page')
+          .insert([{ title: prompt('title?'), body: prompt('body?') }]);
+        refreshHistory();
+      }
+
+      document
+        .querySelector('#create_button')
+        .addEventListener('click', pageHandler);
+    </script>
+  </body>
+</html>
